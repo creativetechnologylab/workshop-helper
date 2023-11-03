@@ -1,10 +1,10 @@
-import csv
 import argparse
+import csv
 import datetime
 
-PYTHON_FOR_BEGINNERS = "python for beginners"
-GANS_WITH_PYTHON = "gans with python"
-INTRO_TO_GITHUB = "introduction to github and version control"
+PYTHON_FOR_BEGINNERS = "Python For Beginners"
+GANS_WITH_PYTHON = "GANs with Python"
+INTRO_TO_GITHUB = "Introduction to GitHub and Version Control"
 
 MIN_ATTENDANCE = 3
 MAX_ATTENDANCE = 0
@@ -63,6 +63,6 @@ def _create_registration_message(date):
 with open("workshops.csv", "r") as workshops_file:
     workshops = csv.reader(workshops_file, delimiter=",")
     for row in workshops:
-        if len(row) > 0 and row[0].lower() == args.workshop:
+        if len(row) > 0 and row[0].lower() == args.workshop.lower():
             # print(row[DATE_IDX], row[START_TIME_IDX], row[END_TIME_IDX])
             print(_create_registration_message(row[DATE_IDX]))
