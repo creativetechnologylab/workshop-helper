@@ -21,7 +21,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-def _get_ordinal_day(day):
+def _get_ordinal_day(day: str) -> str:
     """Get the ordinal format of a day.
 
     Args:
@@ -42,7 +42,7 @@ def _get_ordinal_day(day):
     return str(day) + "th"
 
 
-def _create_registration_message(date):
+def _create_registration_message(date: str) -> str:
     """Creates a message about when a workshop will open.
 
     Args:
