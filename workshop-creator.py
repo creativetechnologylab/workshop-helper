@@ -1,8 +1,9 @@
 import argparse
 import csv
 import datetime
-import pyautogui
 import time
+
+import pyautogui
 
 PYTHON_FOR_BEGINNERS = "Python For Beginners"
 GANS_WITH_PYTHON = "GANs with Python"
@@ -32,13 +33,14 @@ NOTES_POS = (2987, 748)
 
 
 parser = argparse.ArgumentParser()
+parser.add_argument("workshop")
 parser.add_argument(
-    "workshop"
+    "cutoff", args="?", default=datetime.datetime.today().strftime("%d/%m/%Y")
 )
-parser.add_argument("cutoff", args="?", default=datetime.datetime.today().strftime('%d/%m/%Y'))
 args = parser.parse_args()
 
 CUT_OFF_DATE = datetime.datetime.strptime(args.cutoff, "%d/%m/%Y")
+
 
 def _get_ordinal_day(day: str) -> str:
     """Get the ordinal format of a day.
@@ -79,11 +81,12 @@ def _create_registration_message(date: str) -> str:
     month_name = date.strftime("%B")
     return f"Registration will open on {day_name} {ordinal_day_of_month} {month_name}."
 
+
 def add_event():
-    """Clicks the Add Event button.
-    """
+    """Clicks the Add Event button."""
     pyautogui.click(*ADD_EVENT_POS)
     time.sleep(2)
+
 
 def set_event_info(pos: tuple, input: str):
     """Enters some information in the ORB workshop event fields.
@@ -95,6 +98,7 @@ def set_event_info(pos: tuple, input: str):
     pyautogui.click(*pos)
     time.sleep(1)
     pyautogui.write(input)
+
 
 def set_event_date(date: str):
     """Enters the event date.
@@ -112,6 +116,7 @@ def set_event_date(date: str):
     time.sleep(2)
     print(date)
 
+
 def before_cut_off_date(workshop_date: str) -> bool:
     """Checks if the workshop date is before or on the cut off date.
 
@@ -122,6 +127,7 @@ def before_cut_off_date(workshop_date: str) -> bool:
         bool: True if the workshop is on or before the cut off date, False otherwise.
     """
     return datetime.datetime.strptime(workshop_date, "%d/%m/%Y") <= CUT_OFF_DATE
+
 
 def set_event_times(position: tuple, time: str):
     """Sets the time info for the workshop.
@@ -134,6 +140,7 @@ def set_event_times(position: tuple, time: str):
     pyautogui.press("enter")
     pyautogui.press("down")
     pyautogui.press("enter")
+
 
 DELAY = 5
 print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
@@ -154,4 +161,3 @@ with open("workshops.csv", "r") as workshops_file:
             set_event_info(HEADING_POS, row[0] + " in WG28B")
             set_event_info(NOTES_POS, _create_registration_message(row[DATE_IDX]))
             pyautogui.scroll(600)
-
