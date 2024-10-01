@@ -15,7 +15,7 @@ WORKSHOP_NAMES = {
     INTRO_TO_GITHUB: "2 - GitHub",
 }
 
-MIN_ATTENDANCE = 1
+MAX_ATTENDANCE = 1
 WEEKS_BEFORE_WORKSHOP_OPENS = 1
 
 DATE_IDX = 1
@@ -45,7 +45,7 @@ def _get_ordinal_day(day: str) -> str:
         str: Day of the month with ordinal suffix.
     """
     day = int(day)
-    if day >= 4 and day <= 20:
+    if 4 <= day <= 20:
         return str(day) + "th"
     if day % 10 == 1:
         return str(day) + "st"
