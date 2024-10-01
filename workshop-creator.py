@@ -7,10 +7,15 @@ import pyautogui
 
 PYTHON_FOR_BEGINNERS = "Python For Beginners"
 GANS_WITH_PYTHON = "GANs with Python"
-INTRO_TO_GITHUB = "Intro to GitHub and Version Control"
+INTRO_TO_GITHUB = "Introduction to GitHub and Version Control"
 
-MIN_ATTENDANCE = 3
-MAX_ATTENDANCE = 0
+WORKSHOP_NAMES = {
+    PYTHON_FOR_BEGINNERS: "2 - Python",
+    GANS_WITH_PYTHON: "2 - GANs",
+    INTRO_TO_GITHUB: "2 - GitHub",
+}
+
+MIN_ATTENDANCE = 1
 WEEKS_BEFORE_WORKSHOP_OPENS = 1
 
 DATE_IDX = 1
@@ -18,28 +23,16 @@ START_TIME_IDX = 2
 END_TIME_IDX = 4
 DATE_STRING_LENGTH = len("DD/MM/YYYY")
 
-EVENT_INFO_Y = 535
-ADD_EVENT_POS = (2988, 301)
-DONE_BUTTON_POS = (4409, 936)
-HEADING_POS = (2935, 416)
-DATE_INPUT_POS = (4432, 852)
-EVENT_DATE_POS = (3335, EVENT_INFO_Y)
-START_TIME_POS = (3672, EVENT_INFO_Y)
-FINISH_TIME_POS = (3956, EVENT_INFO_Y)
-APPROX_TIME_POS = (4331, EVENT_INFO_Y)
-MIN_ATTEND_POS = (5021, EVENT_INFO_Y)
-MAX_ATTENT_POS = (5365, EVENT_INFO_Y)
-NOTES_POS = (2987, 748)
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument("workshop")
 parser.add_argument(
-    "cutoff", args="?", default=datetime.datetime.today().strftime("%d/%m/%Y")
+    "cutoff", nargs="?", default=datetime.datetime.today().strftime("%d/%m/%Y")
 )
 args = parser.parse_args()
 
 CUT_OFF_DATE = datetime.datetime.strptime(args.cutoff, "%d/%m/%Y")
+
+CALENDAR_WORKSHOP_NAME = WORKSHOP_NAMES[args.workshop]
 
 
 def _get_ordinal_day(day: str) -> str:
@@ -82,41 +75,6 @@ def _create_registration_message(date: str) -> str:
     return f"Registration will open on {day_name} {ordinal_day_of_month} {month_name}."
 
 
-def add_event():
-    """Clicks the Add Event button."""
-    pyautogui.click(*ADD_EVENT_POS)
-    time.sleep(2)
-
-
-def set_event_info(pos: tuple, input: str):
-    """Enters some information in the ORB workshop event fields.
-
-    Args:
-        pos (tuple): A tuple of the mouse position for the field.
-        input (str): A string of information to be entered in the field.
-    """
-    pyautogui.click(*pos)
-    time.sleep(1)
-    pyautogui.write(input)
-
-
-def set_event_date(date: str):
-    """Enters the event date.
-
-    Args:
-        date (str): The date of the workshop in a DD/MM/YYY format.
-    """
-    pyautogui.click(*EVENT_DATE_POS)
-    pyautogui.click(*DATE_INPUT_POS, clicks=2, interval=1)
-    for _ in range(DATE_STRING_LENGTH):
-        pyautogui.press("backspace")
-    pyautogui.write(date)
-    time.sleep(1)
-    pyautogui.click(*DONE_BUTTON_POS)
-    time.sleep(2)
-    print(date)
-
-
 def before_cut_off_date(workshop_date: str) -> bool:
     """Checks if the workshop date is before or on the cut off date.
 
@@ -129,35 +87,45 @@ def before_cut_off_date(workshop_date: str) -> bool:
     return datetime.datetime.strptime(workshop_date, "%d/%m/%Y") <= CUT_OFF_DATE
 
 
-def set_event_times(position: tuple, time: str):
-    """Sets the time info for the workshop.
-
-    Args:
-        position (tuple): The position of the event start/end time field.
-        time (str): The time that should be inputted.
-    """
-    set_event_info(position, time)
-    pyautogui.press("enter")
-    pyautogui.press("down")
-    pyautogui.press("enter")
+def write_to_text_field():
+    pyautogui.write("LCC")
 
 
-DELAY = 5
-print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
-time.sleep(DELAY)
+def press_tab(count: int):
+    for _ in range(count):
+        pyautogui.press("tab")
 
-with open("workshops.csv", "r") as workshops_file:
+
+def set_event_times(date: str):
+    date = datetime.datetime.strptime(date, "%d/%m/%Y")
+
+
+# DELAY = 5
+# print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
+# time.sleep(DELAY)
+
+with open("calendar.csv", "r") as workshops_file:
     workshops = csv.reader(workshops_file, delimiter=",")
-    for row in reversed(list(workshops)):
-        if len(row) > 0 and row[0].lower() == args.workshop.lower():
-            if before_cut_off_date(row[DATE_IDX]):
-                continue
-            add_event()
-            set_event_date(row[DATE_IDX])
-            set_event_times(START_TIME_POS, row[START_TIME_IDX][:-3])
-            set_event_times(FINISH_TIME_POS, row[END_TIME_IDX][:-3])
-            set_event_info(MIN_ATTEND_POS, str(MIN_ATTENDANCE))
-            set_event_info(MAX_ATTENT_POS, str(MAX_ATTENDANCE))
-            set_event_info(HEADING_POS, row[0] + " in WG28B")
-            set_event_info(NOTES_POS, _create_registration_message(row[DATE_IDX]))
-            pyautogui.scroll(600)
+    workshops = [
+        row
+        for row in reversed(list(workshops))
+        if len(row) > 0
+        and row[0] == CALENDAR_WORKSHOP_NAME
+        and not before_cut_off_date(row[DATE_IDX])
+    ]
+
+print(workshops)
+
+# press_tab(10)
+# write_to_text_field("LCC")
+# press_tab(2)
+# write_to_text_field("WG28B")
+# press_tab(2)
+#
+# pyautogui.press("down")
+# press_tab(1)
+
+# set_event_times(row[DATE_IDX])
+# pyautogui.press("enter")
+# set_event_info(NOTES_POS, _create_registration_message(row[DATE_IDX]))
+# pyautogui.scroll(600)
