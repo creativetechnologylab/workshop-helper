@@ -87,8 +87,8 @@ def before_cut_off_date(workshop_date: str) -> bool:
     return datetime.datetime.strptime(workshop_date, "%d/%m/%Y") <= CUT_OFF_DATE
 
 
-def write_to_text_field():
-    pyautogui.write("LCC")
+def write_to_text_field(text: str):
+    pyautogui.write(text)
 
 
 def press_tab(count: int):
@@ -96,13 +96,53 @@ def press_tab(count: int):
         pyautogui.press("tab")
 
 
-def set_event_times(date: str):
+def _set_date(date):
+    pyautogui.press("home")
+    for _ in range(date.day - 1):
+        pyautogui.press("down")
+    press_tab(1)
+
+    pyautogui.press("home")
+    for _ in range(date.month - 1):
+        pyautogui.press("down")
+
+
+def set_event_times(date: str, start_time: str, end_time: str):
     date = datetime.datetime.strptime(date, "%d/%m/%Y")
+    start_time = datetime.datetime.strptime(start_time, "%H:%M:%S").time()
+    end_time = datetime.datetime.strptime(end_time, "%H:%M:%S").time()
+
+    _set_date(date)
+    press_tab(2)
+
+    pyautogui.press("home")
+    for _ in range(start_time.hour - 1):
+        pyautogui.press("down")
+    press_tab(1)
+
+    pyautogui.press("home")
+    for _ in range(start_time.minute - 1):
+        pyautogui.press("down")
+
+    press_tab(2)
+    _set_date(date)
+    press_tab(2)
+
+    pyautogui.press("home")
+    for _ in range(end_time.hour - 1):
+        pyautogui.press("down")
+    press_tab(1)
+
+    pyautogui.press("home")
+    for _ in range(end_time.minute - 1):
+        pyautogui.press("down")
+
+    press_tab(3)
 
 
-# DELAY = 5
-# print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
-# time.sleep(DELAY)
+DELAY = 5
+print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
+time.sleep(DELAY)
 
 with open("calendar.csv", "r") as workshops_file:
     workshops = csv.reader(workshops_file, delimiter=",")
@@ -114,18 +154,19 @@ with open("calendar.csv", "r") as workshops_file:
         and not before_cut_off_date(row[DATE_IDX])
     ]
 
-print(workshops)
+print(workshops[0])
 
-# press_tab(10)
-# write_to_text_field("LCC")
-# press_tab(2)
-# write_to_text_field("WG28B")
-# press_tab(2)
-#
-# pyautogui.press("down")
-# press_tab(1)
+pyautogui.click()
+pyautogui.write("LCC")
+press_tab(2)
+pyautogui.write("WG28B")
+press_tab(2)
+pyautogui.press("down")
+press_tab(1)
 
-# set_event_times(row[DATE_IDX])
-# pyautogui.press("enter")
-# set_event_info(NOTES_POS, _create_registration_message(row[DATE_IDX]))
-# pyautogui.scroll(600)
+for workshop in workshops[:1]:
+
+    set_event_times(
+        workshop[DATE_IDX], workshop[START_TIME_IDX], workshop[END_TIME_IDX]
+    )
+    # pyautogui.press("enter")
