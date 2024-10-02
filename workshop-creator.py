@@ -5,9 +5,9 @@ import time
 
 import pyautogui
 
-PYTHON_FOR_BEGINNERS = "Python For Beginners"
-GANS_WITH_PYTHON = "GANs with Python"
-INTRO_TO_GITHUB = "Introduction to GitHub and Version Control"
+PYTHON_FOR_BEGINNERS = "python"
+GANS_WITH_PYTHON = "gans"
+INTRO_TO_GITHUB = "github"
 
 WORKSHOP_NAMES = {
     PYTHON_FOR_BEGINNERS: "2 - Python",
@@ -18,6 +18,7 @@ WORKSHOP_NAMES = {
 DATE_IDX = 1
 START_TIME_IDX = 2
 END_TIME_IDX = 4
+WEEKS_BEFORE_WORKSHOP_OPENS = 1
 
 parser = argparse.ArgumentParser()
 parser.add_argument("workshop")
@@ -83,15 +84,23 @@ def before_cut_off_date(workshop_date: str) -> bool:
     return datetime.datetime.strptime(workshop_date, "%d/%m/%Y") <= CUT_OFF_DATE
 
 
-def write_to_text_field(text: str):
-    pyautogui.write(text)
-
-
 def press_tab(count: int):
+    """Repeatedly presses the tab key to move around the page.
+
+    Args:
+        count: Number of times the tab button should be pressed.
+
+    """
     pyautogui.press("tab", presses=count, interval=0.1)
 
 
 def _set_date(date):
+    """Enters the date information for the workshop.
+
+    Args:
+        date: The date object.
+
+    """
     pyautogui.press("home")
     for _ in range(date.day - 1):
         pyautogui.press("down")
@@ -102,7 +111,33 @@ def _set_date(date):
         pyautogui.press("down")
 
 
+def _enter_time_information(session_time):
+    """Enters the start and end times for the workshop.
+
+    Args:
+        session_time: The time object.
+
+    """
+
+    pyautogui.press("home")
+    for _ in range(session_time.hour - 1):
+        pyautogui.press("down")
+    press_tab(1)
+
+    pyautogui.press("home")
+    for _ in range(session_time.minute):
+        pyautogui.press("down")
+
+
 def set_event_times(date: str, start_time: str, end_time: str):
+    """
+    Sets the event date and time information for the workshop.
+    Args:
+        date: The workshop date.
+        start_time: The workshop start time.
+        end_time:  The workshop end time.
+
+    """
     date = datetime.datetime.strptime(date, "%d/%m/%Y")
     start_time = datetime.datetime.strptime(start_time, "%H:%M:%S").time()
     end_time = datetime.datetime.strptime(end_time, "%H:%M:%S").time()
@@ -110,27 +145,13 @@ def set_event_times(date: str, start_time: str, end_time: str):
     _set_date(date)
     press_tab(2)
 
-    pyautogui.press("home")
-    for _ in range(start_time.hour - 1):
-        pyautogui.press("down")
-    press_tab(1)
-
-    pyautogui.press("home")
-    for _ in range(start_time.minute):
-        pyautogui.press("down")
+    _enter_time_information(start_time)
 
     press_tab(2)
     _set_date(date)
     press_tab(2)
 
-    pyautogui.press("home")
-    for _ in range(end_time.hour - 1):
-        pyautogui.press("down")
-    press_tab(1)
-
-    pyautogui.press("home")
-    for _ in range(end_time.minute):
-        pyautogui.press("down")
+    _enter_time_information(end_time)
 
 
 DELAY = 5
@@ -149,31 +170,42 @@ with open("calendar.csv", "r") as workshops_file:
 
 for ws in workshops:
 
+    # look for "add new session" link
     pyautogui.keyDown("ctrl")
     pyautogui.press("f")
     pyautogui.keyUp("ctrl")
     pyautogui.write("Add")
     pyautogui.press("enter")
 
+    # open the link
     pyautogui.keyDown("ctrl")
     pyautogui.press("enter")
     pyautogui.keyUp("ctrl")
 
-    time.sleep(1)
-    press_tab(10)
+    # wait for new page to load
+    time.sleep(3)
 
+    # enter location and room information
+    press_tab(10)
     pyautogui.write("LCC")
     press_tab(2)
     pyautogui.write("WG28B")
     press_tab(2)
     pyautogui.press("down")
-    press_tab(1)
 
+    # set the event time/date information
+    press_tab(1)
     set_event_times(ws[DATE_IDX], ws[START_TIME_IDX], ws[END_TIME_IDX])
+
+    # give session capacity
     press_tab(7)
-    pyautogui.write("1")
+    pyautogui.write("8")
+
+    # allow overbooking
     press_tab(1)
     pyautogui.press("space")
     press_tab(10)
+
+    # create the workshop
     pyautogui.press("enter")
-    time.sleep(2)
+    time.sleep(3)
