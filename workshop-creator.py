@@ -15,13 +15,9 @@ WORKSHOP_NAMES = {
     INTRO_TO_GITHUB: "2 - GitHub",
 }
 
-MAX_ATTENDANCE = 1
-WEEKS_BEFORE_WORKSHOP_OPENS = 1
-
 DATE_IDX = 1
 START_TIME_IDX = 2
 END_TIME_IDX = 4
-DATE_STRING_LENGTH = len("DD/MM/YYYY")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("workshop")
