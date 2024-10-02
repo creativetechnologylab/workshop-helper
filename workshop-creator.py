@@ -5,6 +5,11 @@ import time
 
 import pyautogui
 
+HOME = "home"
+DOWN = "down"
+CTRL = "ctrl"
+ENTER = "enter"
+
 PYTHON_FOR_BEGINNERS = "python"
 GANS_WITH_PYTHON = "gans"
 INTRO_TO_GITHUB = "github"
@@ -101,14 +106,14 @@ def _set_date(date):
         date: The date object.
 
     """
-    pyautogui.press("home")
+    pyautogui.press(HOME)
     for _ in range(date.day - 1):
-        pyautogui.press("down")
+        pyautogui.press(DOWN)
     press_tab(1)
 
-    pyautogui.press("home")
+    pyautogui.press(HOME)
     for _ in range(date.month - 1):
-        pyautogui.press("down")
+        pyautogui.press(DOWN)
 
 
 def _enter_time_information(session_time):
@@ -118,15 +123,14 @@ def _enter_time_information(session_time):
         session_time: The time object.
 
     """
-
-    pyautogui.press("home")
+    pyautogui.press(HOME)
     for _ in range(session_time.hour - 1):
-        pyautogui.press("down")
+        pyautogui.press(DOWN)
     press_tab(1)
 
-    pyautogui.press("home")
+    pyautogui.press(HOME)
     for _ in range(session_time.minute):
-        pyautogui.press("down")
+        pyautogui.press(DOWN)
 
 
 def set_event_times(date: str, start_time: str, end_time: str):
@@ -171,16 +175,16 @@ with open("calendar.csv", "r") as workshops_file:
 for ws in workshops:
 
     # look for "add new session" link
-    pyautogui.keyDown("ctrl")
+    pyautogui.keyDown(CTRL)
     pyautogui.press("f")
-    pyautogui.keyUp("ctrl")
+    pyautogui.keyUp(CTRL)
     pyautogui.write("Add")
-    pyautogui.press("enter")
+    pyautogui.press(ENTER)
 
-    # open the link
-    pyautogui.keyDown("ctrl")
-    pyautogui.press("enter")
-    pyautogui.keyUp("ctrl")
+    # open the link - this only works with chromium
+    pyautogui.keyDown(CTRL)
+    pyautogui.press(ENTER)
+    pyautogui.keyUp(CTRL)
 
     # wait for new page to load
     time.sleep(3)
@@ -191,7 +195,7 @@ for ws in workshops:
     press_tab(2)
     pyautogui.write("WG28B")
     press_tab(2)
-    pyautogui.press("down")
+    pyautogui.press(DOWN)
 
     # set the event time/date information
     press_tab(1)
@@ -207,5 +211,5 @@ for ws in workshops:
     press_tab(10)
 
     # create the workshop
-    pyautogui.press("enter")
+    pyautogui.press(ENTER)
     time.sleep(3)
