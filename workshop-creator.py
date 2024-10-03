@@ -124,7 +124,7 @@ def _enter_time_information(session_time):
 
     """
     pyautogui.press(HOME)
-    for _ in range(session_time.hour - 1):
+    for _ in range(session_time.hour):
         pyautogui.press(DOWN)
     press_tab(1)
 
