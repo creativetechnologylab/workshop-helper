@@ -20,21 +20,30 @@ WORKSHOP_NAMES = {
     INTRO_TO_GITHUB: "2 - GitHub",
 }
 
+FULL_NAME = {
+    "2 - Python": "Python For Beginners",
+    "2 - GANs": "GANs with Python",
+    "2 - GitHub": "Introduction to GitHub and Version Control",
+}
+
 DATE_IDX = 1
 START_TIME_IDX = 2
 END_TIME_IDX = 4
 WEEKS_BEFORE_WORKSHOP_OPENS = 1
 
 parser = argparse.ArgumentParser()
-parser.add_argument("workshop")
+parser.add_argument("--workshop", nargs="?", default=None)
 parser.add_argument(
-    "cutoff", nargs="?", default=datetime.datetime.today().strftime("%d/%m/%Y")
+    "--cutoff", nargs="?", default=datetime.datetime.today().strftime("%d/%m/%Y")
 )
 args = parser.parse_args()
 
 CUT_OFF_DATE = datetime.datetime.strptime(args.cutoff, "%d/%m/%Y")
 
-CALENDAR_WORKSHOP_NAME = WORKSHOP_NAMES[args.workshop]
+if args.workshop is not None:
+    CALENDAR_WORKSHOP_NAME = WORKSHOP_NAMES[args.workshop]
+else:
+    CALENDAR_WORKSHOP_NAME = None
 
 
 def _get_ordinal_day(day: str) -> str:
@@ -158,58 +167,83 @@ def set_event_times(date: str, start_time: str, end_time: str):
     _enter_time_information(end_time)
 
 
-DELAY = 5
-print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
-time.sleep(DELAY)
+if CALENDAR_WORKSHOP_NAME:
+    DELAY = 5
+    print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
+    time.sleep(DELAY)
 
-with open("calendar.csv", "r") as workshops_file:
-    workshops = csv.reader(workshops_file, delimiter=",")
-    workshops = [
-        row
-        for row in reversed(list(workshops))
-        if len(row) > 0
-        and row[0] == CALENDAR_WORKSHOP_NAME
-        and not before_cut_off_date(row[DATE_IDX])
-    ]
+    with open("calendar.csv", "r") as workshops_file:
+        workshops = csv.reader(workshops_file, delimiter=",")
+        workshops = [
+            row
+            for row in reversed(list(workshops))
+            if len(row) > 0
+            and row[0] == CALENDAR_WORKSHOP_NAME
+            and not before_cut_off_date(row[DATE_IDX])
+        ]
 
-for ws in workshops:
+    for ws in workshops:
 
-    # look for "add new session" link
-    pyautogui.keyDown(CTRL)
-    pyautogui.press("f")
-    pyautogui.keyUp(CTRL)
-    pyautogui.write("Add")
-    pyautogui.press(ENTER)
+        # look for "add new session" link
+        pyautogui.keyDown(CTRL)
+        pyautogui.press("f")
+        pyautogui.keyUp(CTRL)
+        pyautogui.write("Add")
+        pyautogui.press(ENTER)
 
-    # open the link - this only works with chromium
-    pyautogui.keyDown(CTRL)
-    pyautogui.press(ENTER)
-    pyautogui.keyUp(CTRL)
+        # open the link - this only works with chromium
+        pyautogui.keyDown(CTRL)
+        pyautogui.press(ENTER)
+        pyautogui.keyUp(CTRL)
 
-    # wait for new page to load
-    time.sleep(3)
+        # wait for new page to load
+        time.sleep(3)
 
-    # enter location and room information
-    press_tab(10)
-    pyautogui.write("LCC")
-    press_tab(2)
-    pyautogui.write("WG28B")
-    press_tab(2)
-    pyautogui.press(DOWN)
+        # enter location and room information
+        press_tab(10)
+        pyautogui.write("LCC")
+        press_tab(2)
+        pyautogui.write("WG28B")
+        press_tab(2)
+        pyautogui.press(DOWN)
 
-    # set the event time/date information
-    press_tab(1)
-    set_event_times(ws[DATE_IDX], ws[START_TIME_IDX], ws[END_TIME_IDX])
+        # set the event time/date information
+        press_tab(1)
+        set_event_times(ws[DATE_IDX], ws[START_TIME_IDX], ws[END_TIME_IDX])
 
-    # give session capacity
-    press_tab(7)
-    pyautogui.write("8")
+        # give session capacity
+        press_tab(7)
+        pyautogui.write("8")
 
-    # allow overbooking
-    press_tab(1)
-    pyautogui.press("space")
-    press_tab(10)
+        # allow overbooking
+        press_tab(1)
+        pyautogui.press("space")
+        press_tab(10)
 
-    # create the workshop
-    pyautogui.press(ENTER)
-    time.sleep(3)
+        # create the workshop
+        pyautogui.press(ENTER)
+        time.sleep(3)
+
+else:
+    with open("calendar.csv", "r") as workshops_file:
+        rows = csv.reader(workshops_file, delimiter=",")
+
+        workshops = []
+        for row in reversed(list(rows)):
+
+            if (
+                len(row) > 0
+                and row[0] in WORKSHOP_NAMES.values()
+                and not before_cut_off_date(row[DATE_IDX])
+            ):
+                row[0] = FULL_NAME[row[0]]
+                row[DATE_IDX] = datetime.datetime.strptime(row[DATE_IDX], "%d/%m/%Y")
+                workshops.append(row)
+
+        workshops = sorted(workshops, key=lambda x: x[DATE_IDX])
+
+        # 07/11 – 15:00 – 16:30 - Workshop name
+        for ws in workshops:
+            print(
+                f"{ws[DATE_IDX].strftime('%d/%m')} - {ws[START_TIME_IDX][:-3]} - {ws[END_TIME_IDX][:-3]} - {ws[0]}"
+            )
