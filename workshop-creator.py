@@ -11,19 +11,19 @@ CTRL = "ctrl"
 ENTER = "enter"
 
 PYTHON_FOR_BEGINNERS = "python"
-GANS_WITH_PYTHON = "gans"
+GEN_AI_WITH_PYTHON = "gen-ai"
 INTRO_TO_GITHUB = "github"
 
 WORKSHOP_NAMES = {
-    PYTHON_FOR_BEGINNERS: "2 - Python",
-    GANS_WITH_PYTHON: "2 - GANs",
-    INTRO_TO_GITHUB: "2 - GitHub",
+    PYTHON_FOR_BEGINNERS: "2 - Python For Beginners",
+    GEN_AI_WITH_PYTHON: "2 - Generative AI with Python",
+    INTRO_TO_GITHUB: "2 - Introduction to GitHub and Version Control",
 }
 
 FULL_NAME = {
-    "2 - Python": "Python For Beginners",
-    "2 - GANs": "GANs with Python",
-    "2 - GitHub": "Introduction to GitHub and Version Control",
+    "2 - Python For Beginners": "Python For Beginners",
+    "2 - Generative AI with Python": "Generative AI with Python",
+    "2 - Introduction to GitHub and Version Control": "Introduction to GitHub and Version Control",
 }
 
 DATE_IDX = 1
@@ -115,14 +115,18 @@ def _set_date(date):
         date: The date object.
 
     """
+    press_tab(1)
+    pyautogui.press(HOME)
+    for _ in range(date.month - 1):
+        pyautogui.press(DOWN)
+
+    pyautogui.keyDown("shift")
+    press_tab(1)
+    pyautogui.keyUp("shift")
     pyautogui.press(HOME)
     for _ in range(date.day - 1):
         pyautogui.press(DOWN)
     press_tab(1)
-
-    pyautogui.press(HOME)
-    for _ in range(date.month - 1):
-        pyautogui.press(DOWN)
 
 
 def _enter_time_information(session_time):
@@ -172,7 +176,7 @@ if CALENDAR_WORKSHOP_NAME:
     print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
     time.sleep(DELAY)
 
-    with open("calendar.csv", "r") as workshops_file:
+    with open("workshops.csv", "r") as workshops_file:
         workshops = csv.reader(workshops_file, delimiter=",")
         workshops = [
             row
@@ -197,10 +201,10 @@ if CALENDAR_WORKSHOP_NAME:
         pyautogui.keyUp(CTRL)
 
         # wait for new page to load
-        time.sleep(3)
+        time.sleep(5)
 
         # enter location and room information
-        press_tab(10)
+        press_tab(6)
         pyautogui.write("LCC")
         press_tab(2)
         pyautogui.write("WG28B")
@@ -222,10 +226,10 @@ if CALENDAR_WORKSHOP_NAME:
 
         # create the workshop
         pyautogui.press(ENTER)
-        time.sleep(3)
+        time.sleep(10)
 
 else:
-    with open("calendar.csv", "r") as workshops_file:
+    with open("workshops.csv", "r") as workshops_file:
         rows = csv.reader(workshops_file, delimiter=",")
 
         workshops = []
