@@ -215,14 +215,12 @@ if CALENDAR_WORKSHOP_NAME:
         press_tab(1)
         set_event_times(ws[DATE_IDX], ws[START_TIME_IDX], ws[END_TIME_IDX])
 
-        # give session capacity
+        # give session capacity as 1 to start with
         press_tab(7)
-        pyautogui.write("8")
+        pyautogui.write("1")
 
-        # allow overbooking
-        press_tab(1)
-        pyautogui.press("space")
-        press_tab(10)
+        # don't allow overbooking for now
+        press_tab(11)
 
         # create the workshop
         pyautogui.press(ENTER)
