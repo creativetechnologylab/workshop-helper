@@ -30,6 +30,7 @@ DATE_IDX = 1
 START_TIME_IDX = 2
 END_TIME_IDX = 4
 WEEKS_BEFORE_WORKSHOP_OPENS = 1
+LOCATION_COUNT = 6
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--workshop", nargs="?", default=None)
@@ -42,6 +43,8 @@ CUT_OFF_DATE = datetime.datetime.strptime(args.cutoff, "%d/%m/%Y")
 
 if args.workshop is not None:
     CALENDAR_WORKSHOP_NAME = WORKSHOP_NAMES[args.workshop]
+    if args.workshop == "github":
+        LOCATION_COUNT = 7
 else:
     CALENDAR_WORKSHOP_NAME = None
 
@@ -171,6 +174,25 @@ def set_event_times(date: str, start_time: str, end_time: str):
     _enter_time_information(end_time)
 
 
+def click_sign_up(next=False):
+    # look for "add new session" link
+    pyautogui.keyDown(CTRL)
+    pyautogui.press("f")
+    pyautogui.keyUp(CTRL)
+    pyautogui.write("Sign-up")
+
+    if next:
+        pyautogui.press(ENTER)
+
+    # open the link - this only works with chromium
+    pyautogui.keyDown(CTRL)
+    pyautogui.press(ENTER)
+    pyautogui.keyUp(CTRL)
+
+    # wait for new page to load
+    time.sleep(5)
+
+
 if CALENDAR_WORKSHOP_NAME:
     DELAY = 5
     print(f"{str(DELAY)} seconds to make sure your mouse is in the right place...")
@@ -192,7 +214,7 @@ if CALENDAR_WORKSHOP_NAME:
         pyautogui.keyDown(CTRL)
         pyautogui.press("f")
         pyautogui.keyUp(CTRL)
-        pyautogui.write("Add")
+        pyautogui.write("Add a new")
         pyautogui.press(ENTER)
 
         # open the link - this only works with chromium
@@ -204,7 +226,7 @@ if CALENDAR_WORKSHOP_NAME:
         time.sleep(5)
 
         # enter location and room information
-        press_tab(6)
+        press_tab(LOCATION_COUNT)
         pyautogui.write("LCC")
         press_tab(2)
         pyautogui.write("WG28B")
@@ -225,6 +247,10 @@ if CALENDAR_WORKSHOP_NAME:
         # create the workshop
         pyautogui.press(ENTER)
         time.sleep(10)
+
+        # sign up to the workshop
+        click_sign_up()
+        click_sign_up(True)
 
 else:
     with open("workshops.csv", "r") as workshops_file:
