@@ -175,16 +175,17 @@ def set_event_times(date: str, start_time: str, end_time: str):
 
 
 def click_sign_up(next=False):
-    # look for "add new session" link
+    # look for "Sign-up" link
     pyautogui.keyDown(CTRL)
     pyautogui.press("f")
     pyautogui.keyUp(CTRL)
     pyautogui.write("Sign-up")
 
     if next:
+        # the next page says "Sign-up" in two places
         pyautogui.press(ENTER)
 
-    # open the link - this only works with chromium
+    # open the link
     pyautogui.keyDown(CTRL)
     pyautogui.press(ENTER)
     pyautogui.keyUp(CTRL)
