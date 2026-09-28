@@ -6,6 +6,12 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "argparse>=1.4.0",
+    "clipboard>=0.0.4",
     "datetime>=5.5",
     "pyautogui>=0.9.54",
+]
+
+[dependency-groups]
+dev = [
+    "black>=26.5.1",
 ]
