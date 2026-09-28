@@ -44,7 +44,7 @@ CUT_OFF_DATE = datetime.datetime.strptime(args.cutoff, "%d/%m/%Y")
 
 if args.workshop is not None:
     CALENDAR_WORKSHOP_NAME = WORKSHOP_NAMES[args.workshop]
-    if args.workshop == "github":
+    if args.workshop == INTRO_TO_GITHUB:
         LOCATION_COUNT = 7
 else:
     CALENDAR_WORKSHOP_NAME = None
