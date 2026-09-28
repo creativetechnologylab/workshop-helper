@@ -228,9 +228,7 @@ if CALENDAR_WORKSHOP_NAME:
         time.sleep(5)
 
         # enter location and room information
-        press_tab(6)
-        if args.workshop == INTRO_TO_GITHUB:
-            press_tab(1)
+        press_tab(LOCATION_COUNT)
         pyautogui.write("LCC")
         press_tab(2)
         pyautogui.write("WG28B")
