@@ -3,6 +3,7 @@ import csv
 import datetime
 import time
 
+import clipboard
 import pyautogui
 
 HOME = "home"
@@ -192,7 +193,7 @@ if CALENDAR_WORKSHOP_NAME:
         pyautogui.keyDown(CTRL)
         pyautogui.press("f")
         pyautogui.keyUp(CTRL)
-        pyautogui.write("Add")
+        pyautogui.write("Add a")
         pyautogui.press(ENTER)
 
         # open the link - this only works with chromium
@@ -205,6 +206,8 @@ if CALENDAR_WORKSHOP_NAME:
 
         # enter location and room information
         press_tab(6)
+        if args.workshop == INTRO_TO_GITHUB:
+            press_tab(1)
         pyautogui.write("LCC")
         press_tab(2)
         pyautogui.write("WG28B")
@@ -227,7 +230,7 @@ if CALENDAR_WORKSHOP_NAME:
         time.sleep(10)
 
 else:
-    with open("workshops.csv", "r") as workshops_file:
+    with open("workshops.csv", mode="r", encoding="utf-8") as workshops_file:
         rows = csv.reader(workshops_file, delimiter=",")
 
         workshops = []
@@ -244,8 +247,12 @@ else:
 
         workshops = sorted(workshops, key=lambda x: x[DATE_IDX])
 
+        info = []
+
         # 07/11 – 15:00 – 16:30 - Workshop name
         for ws in workshops:
-            print(
-                f"{ws[DATE_IDX].strftime('%d/%m')} - {ws[START_TIME_IDX][:-3]} - {ws[END_TIME_IDX][:-3]} - {ws[0]}"
-            )
+            line = f"{ws[DATE_IDX].strftime('%d/%m')} - {ws[START_TIME_IDX][:-3]} - {ws[END_TIME_IDX][:-3]} - {ws[0]}"
+            print(line)
+            info.append(line)
+
+        clipboard.copy("\n".join(info))
